@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './screens/products_overview_screen.dart';
-import './screens/product_detail.dart';
-import './providers/products.provider.dart';
+import 'package:shop_app/providers/products.provider.dart';
+import 'package:shop_app/screens/product_detail.screen.dart';
+import 'package:shop_app/screens/products_overview.screen.dart';
 
 void main() => runApp(MyApp());
 
