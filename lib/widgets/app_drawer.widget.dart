@@ -21,7 +21,7 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.shop),
+            leading: Icon(Icons.credit_card),
             title: Text('Orders'),
             onTap: () {
               Navigator.of(context)
