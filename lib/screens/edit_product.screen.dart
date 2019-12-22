@@ -7,6 +7,7 @@ class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
 
   @override
+  
   _EditProductScreenState createState() => _EditProductScreenState();
 }
 
