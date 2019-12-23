@@ -27,7 +27,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    final url = 'https://flutter-shop-app-fee3a.firebaseio.com/orders.json';
+    const url = 'https://flutter-shop-app-fee3a.firebaseio.com/orders.json';
     final timeStamp = DateTime.now();
     final response = await http.post(url,
         body: json.encode({
@@ -38,7 +38,7 @@ class Orders with ChangeNotifier {
                     'id': cartItem.id,
                     'title': cartItem.title,
                     'price': cartItem.price,
-                    'quantitiy': cartItem.quantity
+                    'quantity': cartItem.quantity
                   })
               .toList()
         }));
@@ -53,6 +53,38 @@ class Orders with ChangeNotifier {
       ),
     );
 
+    notifyListeners();
+  }
+
+  Future<void> fetchAndSetOrders() async {
+    const url = 'https://flutter-shop-app-fee3a.firebaseio.com/orders.json';
+    final response = await http.get(url);
+    final List<OrderItem> loadedOrders = [];
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+    if (extractedData == null) {
+      return;
+    }
+
+    extractedData.forEach((orderId, orderData) {
+      loadedOrders.add(
+        OrderItem(
+          id: orderId,
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(orderData['dateTime']),
+          products: (orderData['products'] as List<dynamic>)
+              .map((item) => CartItem(
+                    id: item['id'],
+                    price: item['price'],
+                    quantity: item['quantity'],
+                    title: item['title'],
+                  ))
+              .toList(),
+        ),
+      );
+    });
+
+    _orders = loadedOrders.reversed.toList();
     notifyListeners();
   }
 }
