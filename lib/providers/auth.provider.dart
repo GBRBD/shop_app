@@ -1,7 +1,7 @@
 import 'dart:convert';
-
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/widgets.dart';
+
 import 'package:shop_app/models/http.exception.dart';
 
 class Auth with ChangeNotifier {
