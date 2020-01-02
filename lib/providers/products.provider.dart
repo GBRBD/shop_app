@@ -7,8 +7,9 @@ import '../providers/product.provider.dart';
 
 class Products with ChangeNotifier {
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   List<Product> _items = [
     //   Product(
@@ -72,7 +73,7 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> fetchAndSetProducts() async {
-    final url =
+    var url =
         'https://flutter-shop-app-fee3a.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.get(url);
@@ -82,24 +83,28 @@ class Products with ChangeNotifier {
         return;
       }
 
-      final List<Product> loadedProducts = [];
-      extractedData.forEach((prodId, prodData) {
-        loadedProducts.add(
-          Product(
-            id: prodId,
-            title: prodData['title'],
-            description: prodData['description'],
-            imageUrl: prodData['imageUrl'],
-            price: prodData['price'],
-            isFavorite: prodData['isFavorite'],
-          ),
-        );
-      });
+      url =
+          'https://flutter-shop-app-fee3a.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
 
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
+
+      final List<Product> loadedProducts = [];
+
+      extractedData.forEach((prodId, prodData) {
+        loadedProducts.add(Product(
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          isFavorite: favoriteData == null ? false : favoriteData[prodId],
+          imageUrl: prodData['imageUrl'],
+        ));
+      });
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
-      throw error;
+      throw (error);
     }
   }
 
@@ -113,7 +118,6 @@ class Products with ChangeNotifier {
         'description': product.description,
         'imageUrl': product.imageUrl,
         'price': product.price,
-        'isFavorite': product.isFavorite,
       },
     );
 
